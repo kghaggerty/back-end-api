@@ -16,7 +16,17 @@ namespace back_end_api.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<DailyCheck>()
+                .Property(b => b.DateCreated)
+                .HasDefaultValueSql("strftime('%Y-%m-%d %H:%M:%S')");
 
+            modelBuilder.Entity<Goals>()
+                .Property(b => b.DateCreated)
+                .HasDefaultValueSql("strftime('%Y-%m-%d %H:%M:%S')");
+                
+                modelBuilder.Entity<Post>()
+                .Property(b => b.DateCreated)
+                .HasDefaultValueSql("strftime('%Y-%m-%d %H:%M:%S')");
         }
     }
 

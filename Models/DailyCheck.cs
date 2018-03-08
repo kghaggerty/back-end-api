@@ -17,7 +17,6 @@ namespace back_end_api
         [Required]
         public string actions { get; set; }
 
-        [Required]
         public DateTime DateCreated { get; set; }
 
         [Required]

@@ -14,7 +14,6 @@ namespace back_end_api
         [Required]
         public string Text { get; set; }
 
-        [Required]
         public DateTime DateCreated { get; set; }
 
        public int UserId { get; set; }
