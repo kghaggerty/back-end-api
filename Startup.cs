@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using back_end_api.Data;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Cors;
 
 namespace back_end_api
 {
@@ -26,6 +27,15 @@ namespace back_end_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options => {
+                options.AddPolicy("AllowAllOrigins", 
+                builder => 
+                {
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                }
+                );
+            });
+
             services.AddMvc();
 
             string path = System.Environment.GetEnvironmentVariable("back_end_apiDB");
@@ -42,6 +52,8 @@ namespace back_end_api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseCors("AllowAllOrigins");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
