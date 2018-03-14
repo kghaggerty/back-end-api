@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using back_end_api;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace back_end_api.Data
 {
-    public class back_end_apiContext : DbContext
+    public class back_end_apiContext : IdentityDbContext<User>
     {
         public back_end_apiContext(DbContextOptions<back_end_apiContext> options)
             : base(options)
@@ -27,6 +28,8 @@ namespace back_end_api.Data
                 modelBuilder.Entity<Post>()
                 .Property(b => b.DateCreated)
                 .HasDefaultValueSql("strftime('%Y-%m-%d %H:%M:%S')");
+
+                base.OnModelCreating(modelBuilder);
         }
     }
 

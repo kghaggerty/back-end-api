@@ -14,13 +14,14 @@ namespace back_end_api
         [Required]
         public string Description { get; set; }
 
-        public int UserId { get; set; }
-        public User User { get; set; }
-
         public DateTime DateCreated { get; set; }
 
         [Required]
         public DateTime DateDue { get; set; }
         public bool isCompleted { get; set; }     
+
+        [Required]
+        public int UserId { get; set; }
+        public User User { get; set; }
     }
 }

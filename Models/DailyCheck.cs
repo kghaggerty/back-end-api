@@ -21,6 +21,8 @@ namespace back_end_api
 
         [Required]
         public string NeedSupport { get; set; }
+        
+        [Required]
         public int UserId { get; set; }
         public User User { get; set; }
     }

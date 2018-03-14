@@ -12,6 +12,9 @@ using Microsoft.EntityFrameworkCore;
 using back_end_api.Data;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
+using System.Text;
 
 namespace back_end_api
 {
@@ -28,15 +31,37 @@ namespace back_end_api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors(options => {
-                options.AddPolicy("AllowAllOrigins", 
+                options.AddPolicy("AllowAllOrigins",
                 builder => 
                 {
-                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials();
                 }
                 );
             });
+            // Set up identity server so services like SignInManager can be injected into controllers
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<back_end_apiContext>()
+                .AddDefaultTokenProviders();
 
             services.AddMvc();
+            
+             // Set up JWT authentication service
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = "Jwt";  
+                options.DefaultChallengeScheme = "Jwt";              
+            }).AddJwtBearer("Jwt", options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("7A735D7B-1A19-4D8A-9CFA-99F55483013F")), 
+                    ValidateLifetime = true, //validate the expiration and not before values in the token
+                    ClockSkew = TimeSpan.FromMinutes(5) //5 minute tolerance for the expiration date
+                };
+            });
 
             string path = System.Environment.GetEnvironmentVariable("back_end_apiDB");
             var connection = $"Filename={path}";

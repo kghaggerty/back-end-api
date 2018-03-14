@@ -11,9 +11,10 @@ using System;
 namespace backendapi.Migrations
 {
     [DbContext(typeof(back_end_apiContext))]
-    partial class back_end_apiContextModelSnapshot : ModelSnapshot
+    [Migration("20180314153620_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
