@@ -164,8 +164,7 @@ namespace backendapi.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     DateCreated = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "strftime('%Y-%m-%d %H:%M:%S')"),
                     NeedSupport = table.Column<string>(type: "TEXT", nullable: false),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId1 = table.Column<string>(type: "TEXT", nullable: true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
                     actions = table.Column<string>(type: "TEXT", nullable: false),
                     feeling = table.Column<string>(type: "TEXT", nullable: false)
                 },
@@ -173,11 +172,11 @@ namespace backendapi.Migrations
                 {
                     table.PrimaryKey("PK_DailyCheck", x => x.DailyCheckId);
                     table.ForeignKey(
-                        name: "FK_DailyCheck_AspNetUsers_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_DailyCheck_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -264,9 +263,9 @@ namespace backendapi.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_DailyCheck_UserId1",
+                name: "IX_DailyCheck_UserId",
                 table: "DailyCheck",
-                column: "UserId1");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Goals_UserId1",

@@ -11,7 +11,7 @@ using System;
 namespace backendapi.Migrations
 {
     [DbContext(typeof(back_end_apiContext))]
-    [Migration("20180314153620_InitialCreate")]
+    [Migration("20180315145430_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,9 +32,8 @@ namespace backendapi.Migrations
                     b.Property<string>("NeedSupport")
                         .IsRequired();
 
-                    b.Property<int>("UserId");
-
-                    b.Property<string>("UserId1");
+                    b.Property<string>("UserId")
+                        .IsRequired();
 
                     b.Property<string>("actions")
                         .IsRequired();
@@ -44,7 +43,7 @@ namespace backendapi.Migrations
 
                     b.HasKey("DailyCheckId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("DailyCheck");
                 });
@@ -265,21 +264,22 @@ namespace backendapi.Migrations
             modelBuilder.Entity("back_end_api.DailyCheck", b =>
                 {
                     b.HasOne("back_end_api.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1");
+                        .WithMany("DailyCheck")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("back_end_api.Goals", b =>
                 {
                     b.HasOne("back_end_api.User", "User")
-                        .WithMany()
+                        .WithMany("Goals")
                         .HasForeignKey("UserId1");
                 });
 
             modelBuilder.Entity("back_end_api.Post", b =>
                 {
                     b.HasOne("back_end_api.User", "User")
-                        .WithMany()
+                        .WithMany("Post")
                         .HasForeignKey("UserId1");
                 });
 

@@ -17,6 +17,11 @@ namespace back_end_api
         public string LastName { get; set; }
 
         
-        public bool isStaff { get; set; }     
+        public bool isStaff { get; set; }    
+
+        public virtual ICollection<DailyCheck> DailyCheck { get; set; } 
+        public virtual ICollection<Goals> Goals { get; set; } 
+
+        public virtual ICollection<Post> Post { get; set; } 
     }
 }

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Cors;
 using back_end_api.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 // GET api from Daily Check Model
 namespace back_end_api.Controllers
@@ -15,10 +17,12 @@ namespace back_end_api.Controllers
     public class DailyCheckController : Controller
     {
         private back_end_apiContext _context;
+        private readonly UserManager<User> _userManager;
         // Constructor method to create an instance of context to communicate with our database.
-        public DailyCheckController(back_end_apiContext ctx)
+        public DailyCheckController(back_end_apiContext ctx, UserManager<User> userManager)
         {
             _context = ctx;
+            _userManager = userManager;
         }
         // This method handles GET requests to GET a list of users 
         [HttpGet]
@@ -62,20 +66,27 @@ namespace back_end_api.Controllers
 
         /* This method handles POST requests to add a user,
         saves it and throws an error if it already exists. */
+        [Authorize]
         [HttpPost]
-        public IActionResult Post([FromBody]DailyCheck DailyCheck)
+        public async Task<IActionResult> Post([FromBody]DailyCheck DailyCheck)
         {
+            ModelState.Remove("User");
             // error to handle if the user input the correct info in order to use the api
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            // save user to database
-            _context.DailyCheck.Add(DailyCheck);
+            // Grab current user
+            User user = await _context.User.Where(u => u.UserName == User.Identity.Name).SingleOrDefaultAsync();
+            
+            DailyCheck.User = user;
 
+            //Save to database
+            _context.DailyCheck.Add(DailyCheck);
+    
             try
             {
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
@@ -89,7 +100,7 @@ namespace back_end_api.Controllers
                     throw;
                 }
             }
-            return CreatedAtRoute("GetSingleUser", new { id = DailyCheck.DailyCheckId }, User);
+            return CreatedAtRoute("GetSingleDailyCheck", new { id = DailyCheck.DailyCheckId }, User);
         }
 
         /* This method handles PUT requests to edit a single user through searching by id in the db,
