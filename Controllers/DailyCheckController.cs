@@ -68,6 +68,7 @@ namespace back_end_api.Controllers
         saves it and throws an error if it already exists. */
         [Authorize]
         [HttpPost]
+        [System.Web.Http.Cors.EnableCors(origins: "*", headers: "*", methods: "*")]
         public async Task<IActionResult> Post([FromBody]DailyCheck DailyCheck)
         {
             ModelState.Remove("User");
@@ -100,7 +101,7 @@ namespace back_end_api.Controllers
                     throw;
                 }
             }
-            return CreatedAtRoute("GetSingleDailyCheck", new { id = DailyCheck.DailyCheckId }, User);
+            return CreatedAtRoute("GetSingleDailyCheck", new { id = DailyCheck.DailyCheckId }, DailyCheck);
         }
 
         /* This method handles PUT requests to edit a single user through searching by id in the db,

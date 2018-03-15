@@ -30,20 +30,24 @@ namespace back_end_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options => {
-                options.AddPolicy("AllowAllOrigins",
-                builder => 
-                {
-                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials();
-                }
-                );
+            // Set up global CORS policy for controllers
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials() );
             });
+            
             // Set up identity server so services like SignInManager can be injected into controllers
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<back_end_apiContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             
              // Set up JWT authentication service
             services.AddAuthentication(options =>
@@ -77,12 +81,13 @@ namespace back_end_api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseCors("AllowAllOrigins");
+            app.UseCors("CorsPolicy");
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseAuthentication();
 
             app.UseMvc();
             // Enable middleware to serve generated Swagger as a JSON endpoint.

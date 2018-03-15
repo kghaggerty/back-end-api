@@ -11,7 +11,7 @@ using System;
 namespace backendapi.Migrations
 {
     [DbContext(typeof(back_end_apiContext))]
-    [Migration("20180315145430_InitialCreate")]
+    [Migration("20180315184541_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
