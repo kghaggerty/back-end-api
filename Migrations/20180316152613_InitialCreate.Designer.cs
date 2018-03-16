@@ -11,7 +11,7 @@ using System;
 namespace backendapi.Migrations
 {
     [DbContext(typeof(back_end_apiContext))]
-    [Migration("20180315184541_InitialCreate")]
+    [Migration("20180316152613_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,15 +62,14 @@ namespace backendapi.Migrations
                     b.Property<string>("Description")
                         .IsRequired();
 
-                    b.Property<int>("UserId");
-
-                    b.Property<string>("UserId1");
+                    b.Property<string>("UserId")
+                        .IsRequired();
 
                     b.Property<bool>("isCompleted");
 
                     b.HasKey("GoalsId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Goals");
                 });
@@ -87,13 +86,12 @@ namespace backendapi.Migrations
                     b.Property<string>("Text")
                         .IsRequired();
 
-                    b.Property<int>("UserId");
-
-                    b.Property<string>("UserId1");
+                    b.Property<string>("UserId")
+                        .IsRequired();
 
                     b.HasKey("PostId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Post");
                 });
@@ -273,14 +271,16 @@ namespace backendapi.Migrations
                 {
                     b.HasOne("back_end_api.User", "User")
                         .WithMany("Goals")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("back_end_api.Post", b =>
                 {
                     b.HasOne("back_end_api.User", "User")
                         .WithMany("Post")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

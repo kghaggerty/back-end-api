@@ -21,7 +21,6 @@ namespace back_end_api
         public bool isCompleted { get; set; }     
 
         [Required]
-        public int UserId { get; set; }
-        public User User { get; set; }
+        public virtual User User { get; set; }
     }
 }
