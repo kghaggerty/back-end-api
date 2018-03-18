@@ -10,35 +10,34 @@ using back_end_api.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 
-// GET api from Post Model
+// GET api from Daily Check Model
 namespace back_end_api.Controllers
 {
-    [Route("/api/Post")]
-    public class PostController : Controller
+    [Route("/api/Goals")]
+    public class GoalsController : Controller
     {
         private back_end_apiContext _context;
         private readonly UserManager<User> _userManager;
         // Constructor method to create an instance of context to communicate with our database.
-        public PostController(back_end_apiContext ctx, UserManager<User> userManager)
+        public GoalsController(back_end_apiContext ctx, UserManager<User> userManager)
         {
             _context = ctx;
             _userManager = userManager;
         }
-        // This method handles GET requests to GET a list of posts
+        // This method handles GET requests to GET a list of users 
         [HttpGet]
         public IActionResult Get()
         {
-            var Post = _context.Post.ToList();
-            
-            if (Post == null)
+            var Goals = _context.Goals.ToList();
+            if (Goals == null)
             {
                 return NotFound();
             }
-            return Ok(Post);
+            return Ok(Goals);
         }
 
         // This method is using GET to retrieve a single User
-        [HttpGet("{id}", Name = "GetSinglePost")]
+        [HttpGet("{id}", Name = "GetSingleGoals")]
         public IActionResult Get(int id)
         {
             // error to handle if the user input the correct info in order to use the api
@@ -49,14 +48,14 @@ namespace back_end_api.Controllers
             // search database to try and find a match for the computer id entered
             try
             {
-                Post Post = _context.Post.Single(g => g.PostId == id);
+                Goals Goals = _context.Goals.Single(g => g.GoalsId == id);
 
-                if (Post == null)
+                if (Goals == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(Post);
+                return Ok(Goals);
             }
             catch (System.InvalidOperationException ex)
             {
@@ -70,7 +69,7 @@ namespace back_end_api.Controllers
         [Authorize]
         [HttpPost]
         [System.Web.Http.Cors.EnableCors(origins: "*", headers: "*", methods: "*")]
-        public async Task<IActionResult> Post([FromBody]Post Post)
+        public async Task<IActionResult> Post([FromBody]Goals Goals)
         {
             ModelState.Remove("User");
             // error to handle if the user input the correct info in order to use the api
@@ -81,10 +80,10 @@ namespace back_end_api.Controllers
             // Grab current user
             User user = await _context.User.Where(u => u.UserName == User.Identity.Name).SingleOrDefaultAsync();
             
-            Post.User = user;
+            Goals.User = user;
 
             //Save to database
-            _context.Post.Add(Post);
+            _context.Goals.Add(Goals);
     
             try
             {
@@ -93,7 +92,7 @@ namespace back_end_api.Controllers
             catch (DbUpdateException)
             {
                 // check if the User Id already exists in the database and throw an error
-                if (UserExists(Post.PostId))
+                if (UserExists(Goals.GoalsId))
                 {
                     return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
@@ -102,13 +101,13 @@ namespace back_end_api.Controllers
                     throw;
                 }
             }
-            return CreatedAtRoute("GetSinglePost", new { id = Post.PostId }, Post);
+            return CreatedAtRoute("GetSingleGoals", new { id = Goals.GoalsId }, Goals);
         }
 
         /* This method handles PUT requests to edit a single user through searching by id in the db,
         saves modifications and returns an error if the user does not exist. */
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]Post Post)
+        public IActionResult Put(int id, [FromBody]Goals Goals)
         {
             // error to handle if the user input the correct info in order to use the api
             if (!ModelState.IsValid)
@@ -116,11 +115,11 @@ namespace back_end_api.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != Post.PostId)
+            if (id != Goals.GoalsId)
             {
                 return BadRequest();
             }
-            _context.Post.Update(Post);
+            _context.Goals.Update(Goals);
             try
             {
                 _context.SaveChanges();
@@ -145,20 +144,20 @@ namespace back_end_api.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            Post Post = _context.Post.Single(g => g.PostId == id);
+            Goals Goals = _context.Goals.Single(g => g.GoalsId == id);
 
             if (User == null)
             {
                 return NotFound();
             }
-            _context.Post.Remove(Post);
+            _context.Goals.Remove(Goals);
             _context.SaveChanges();
             return Ok(User);
         }
 
-        private bool UserExists(int PostId)
+        private bool UserExists(int GoalsId)
         {
-            return _context.Post.Any(g => g.PostId == PostId);
+            return _context.Goals.Any(g => g.GoalsId == GoalsId);
         }
         
     }
