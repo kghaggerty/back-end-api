@@ -28,7 +28,7 @@ namespace back_end_api.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            var Post = _context.Post.ToList();
+            var Post = _context.Post.Include("User").ToList();
             
             if (Post == null)
             {
