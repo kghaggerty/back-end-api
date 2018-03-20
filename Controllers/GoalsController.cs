@@ -26,9 +26,10 @@ namespace back_end_api.Controllers
         }
         // This method handles GET requests to GET a list of users 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> GetAsync()
         {
-            var Goals = _context.Goals.ToList();
+            User user = await _context.User.Where(u => u.UserName == User.Identity.Name).SingleOrDefaultAsync();
+            var Goals = _context.Goals.Include("User").Where(u => u.User.Id == user.Id ).ToList();
             if (Goals == null)
             {
                 return NotFound();
