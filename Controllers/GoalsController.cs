@@ -108,22 +108,16 @@ namespace back_end_api.Controllers
         /* This method handles PUT requests to edit a single user through searching by id in the db,
         saves modifications and returns an error if the user does not exist. */
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]Goals Goals)
+        public async Task<IActionResult> Put(int id)
+        
         {
-            // error to handle if the user input the correct info in order to use the api
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != Goals.GoalsId)
-            {
-                return BadRequest();
-            }
-            _context.Goals.Update(Goals);
+            var goals = await _context.Goals.SingleOrDefaultAsync(m => m.GoalsId == id);
+            goals.isCompleted = true;
+            
             try
             {
-                _context.SaveChanges();
+                    _context.Update(goals);
+                    await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
